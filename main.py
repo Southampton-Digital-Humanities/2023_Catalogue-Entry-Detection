@@ -46,8 +46,6 @@ capsregex = re.compile("[A-Z][A-Z][A-Z]+")
 indexregex = re.compile("I[ABC]\.\s[0-9]") # I number title references
 dateregex = re.compile("1[45][0-9][0-9]") # Date format regexes (specific to this volume)
 
-
-
 # Looks for identifying marks of a catalogue heading beginning
 def checkLine(line):
     if line is not None:
@@ -137,18 +135,18 @@ def findTitleRef(fullTitle):
 
 
 # Generates an XML document based on the found catalogue headings in the document
-def generateXML(allTitleIndices, allLines):
+def generateXML(allTitleIndices, allLines, titleRefs):
     xml = minidom.Document()
     text = xml.createElement('text')
 
-    for itr in range(len(allTitleIndices[:-1])):
+    for itr in range(len(allTitleIndices[:-2])):
         titleIndices = allTitleIndices[itr]
         catalogueIndices = [x for x in range(titleIndices[-1], allTitleIndices[itr + 1][0])]
         fullTitle = "".join([allLines[x] for x in titleIndices])
         titleRef = findTitleRef(fullTitle)
 
         chapter = xml.createElement('chapter')
-        chapter.setAttribute("REFERENCE", titleRef)
+        chapter.setAttribute("REFERENCE", titleRefs[itr+1])
         chapter.setAttribute("HEADING", fullTitle)
 
         for catalogueIndex in catalogueIndices:
@@ -162,11 +160,11 @@ def generateXML(allTitleIndices, allLines):
     return xml
 
 # Saves the generated XML for the headings into a chosen location
-def saveXML(allTitleIndices, allLines):
+def saveXML(allTitleIndices, allLines, titleRefs):
     path = sys.argv[2] + "/generated"
     if (not os.path.exists(path)):
         os.makedirs(path)
-    xml = generateXML(allTitleIndices, allLines)
+    xml = generateXML(allTitleIndices, allLines, titleRefs)
     xml_str = xml.toprettyxml(indent="\t")
     save_path_file = path+"/headings.xml"
     with open(save_path_file, "w", encoding="utf-8") as f:
@@ -177,20 +175,20 @@ def saveXML(allTitleIndices, allLines):
 
 
 # Saves all of the text, split by chapters, into text files
-def saveRawTxt(allTitleIndices, allLines):
+def saveRawTxt(allTitleIndices, allLines, titleRefs):
     path = sys.argv[2]+"/generated/rawtextfiles"
     if (not os.path.exists(path)):
         os.makedirs(path)
 
-    for itr in range(len(allTitleIndices[:-1])):
+    for itr in range(len(allTitleIndices[:-2])):
         titleIndices = allTitleIndices[itr]
         catalogueIndices = [x for x in range(titleIndices[1], allTitleIndices[itr + 1][0])]
         fullTitle = "".join([allLines[x] for x in titleIndices])
         titleRef = findTitleRef(fullTitle)
 
-        save_path_file = path + "/" +  titleRef.replace(".", "-") + ".txt"
+        save_path_file = path + "/" +  titleRefs[itr+1].replace(".", "-") + ".txt"
         with open(save_path_file, "w", encoding="utf-8") as f:
-            f.write(fullTitle + "\n")
+            #f.write(fullTitle + "\n")
             for lineIndex in catalogueIndices:
                 f.write(allLines[lineIndex] + "\n")
         #shutil.make_archive(path, 'zip', path)
@@ -241,12 +239,12 @@ def splitByLanguage(lines):
     return (firstLanguage,splitLines)
 
 #Saves all of the text, split by chapters into text files where non-english sections of text are removed
-def saveSplitTxt(allTitleIndices, allLines):
+def saveSplitTxt(allTitleIndices, allLines, titleRefs):
     path = sys.argv[2]+"/generated/splittextfiles"
     if (not os.path.exists(path)):
         os.makedirs(path)
 
-    for itr in range(len(allTitleIndices[:-1])):
+    for itr in range(len(allTitleIndices[:-2])):
         titleIndices = allTitleIndices[itr]
         catalogueIndices = [x for x in range(titleIndices[1], allTitleIndices[itr + 1][0])]
         fullTitle = "".join([allLines[x] for x in titleIndices])
@@ -255,7 +253,7 @@ def saveSplitTxt(allTitleIndices, allLines):
         catalogueLines = [allLines[x] for x in catalogueIndices]
         firstLanguage, splitCatalogueLines = splitByLanguage(catalogueLines)
 
-        save_path_file = path + "/" +  titleRef.replace(".", "-") + ".txt"
+        save_path_file = path + "/" +  titleRefs[itr+1].replace(".", "-") + ".txt"
         with open(save_path_file, "w", encoding="utf-8") as f:
             f.write(fullTitle + "\n")
             languageEn = firstLanguage
@@ -314,15 +312,15 @@ def savePoorlyScannedPages(poorlyScanned):
 
 
 # Saves the raw text files, the text files split by language and the XML files
-def saveAll():
+def saveAll(titleRefs):
     path = sys.argv[2] + "/generated"
     if (not os.path.exists(path)):
         os.makedirs(path)
 
     savePoorlyScannedPages(getPoorlyScannedPages(currentVolume, os.listdir(directory)))
-    saveRawTxt(allTitleIndices, allLines)
-    saveSplitTxt(allTitleIndices, allLines)
-    saveXML(allTitleIndices, allLines)
+    saveRawTxt(allTitleIndices, allLines, titleRefs)
+    saveSplitTxt(allTitleIndices, allLines, titleRefs)
+    saveXML(allTitleIndices, allLines, titleRefs)
     shutil.make_archive(path, 'zip', path)
 
 
@@ -343,11 +341,20 @@ if __name__ == '__main__':
     allLines = extractLinesForVol(currentVolume)
     allLines = [line for line in allLines if line is not None]
     titles, allTitleIndices = findHeadings(allLines)
-    saveAll()
+
+    titleRefs = []
+    for itr in range(len(allTitleIndices[:-1])):
+        titleIndices = allTitleIndices[itr]
+        fullTitle = "".join([allLines[x] for x in titleIndices])
+        titleRef = findTitleRef(fullTitle)
+        titleRefs.append(titleRef)
+
+    #print(titleRefs)
+
+    saveAll(titleRefs)
     #savePoorlyScannedPages(getPoorlyScannedPages(currentVolume, os.listdir(directory)))
-    #saveRawTxt(allTitleIndices, allLines)
-    #saveSplitTxt(allTitleIndices, allLines)
-    #saveXML(allTitleIndices, allLines)
+    #saveRawTxt(allTitleIndices, allLines, titleRefs)
+    #saveSplitTxt(allTitleIndices, allLines, titleRefs)
+    #saveXML(allTitleIndices, allLines, titleRefs)
 
     # discrepancy between number of titles and output files
-
