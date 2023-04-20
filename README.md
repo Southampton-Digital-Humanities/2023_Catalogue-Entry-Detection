@@ -10,4 +10,4 @@ To test this we worked with XML-formatted data derived from the 13-volume *Catal
 
 ## License
 
-All data provided by the [British Library](https://creativecommons.org/licenses/by/4.0/): text data [CC0 1.0 Universal Public Domain](https://creativecommons.org/publicdomain/zero/1.0/; images [CC-BY 4.0 International](https://creativecommons.org/licenses/by/4.0/). For code use [MIT License](https://mit-license.org/).
+All data provided by the [British Library](https://creativecommons.org/licenses/by/4.0/): text data [CC0 1.0 Universal Public Domain](https://creativecommons.org/publicdomain/zero/1.0/); images [CC-BY 4.0 International](https://creativecommons.org/licenses/by/4.0/). For code use [MIT License](https://mit-license.org/).
