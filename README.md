@@ -1,6 +1,6 @@
 # Catalogue Entry Detection
 
-This repository contains data and code produced in 2022/2023 by Isaac Dunford as part of a [Digital Humanities](http://digitalhumanities.soton.ac.uk/) Internship funded by the School of Humanities at the University of Southampton.
+This repository contains data and code produced in 2022/2023 by [Isaac Dunford](https://github.com/Mr-Esweg) as part of a [Digital Humanities](http://digitalhumanities.soton.ac.uk/) Internship funded by the School of Humanities at the University of Southampton.
 
 It documents a workflow for extracting catalogue entries from digitised representations of printed catalogues, specifically the 13-volume Catalogue of books printed in the 15th century now at the British Museum (described by Rossitza Atanassov in a post announcing her AHRC-RLUK Professional Practice Fellowship project)
 
