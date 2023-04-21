@@ -2,7 +2,7 @@
 
 This repository contains data and code produced in 2022/2023 by [Isaac Dunford](https://github.com/Mr-Esweg) as part of a [Digital Humanities](http://digitalhumanities.soton.ac.uk/) Internship funded by the School of Humanities at the University of Southampton.
 
-It documents a workflow for extracting catalogue entries from digitised representations of printed catalogues, specifically the 13-volume Catalogue of books printed in the 15th century now at the British Museum (described by Rossitza Atanassov in a post announcing her AHRC-RLUK Professional Practice Fellowship project)
+It documents a workflow for extracting catalogue entries from digitised representations of printed catalogues, specifically the 13-volume Catalogue of books printed in the 15th century now at the British Museum (described by Rossitza Atanassova in a post announcing her AHRC-RLUK Professional Practice Fellowship project)
 
 It documents a project whose purpose was to investigate and implement different methods for detecting catalogue entries within printed catalogues. For whilst printed catalogues are easy enough to digitise and convert into machine readable data, dividing that data by catalogue entry requires visual signifiers of divisions between entries - gaps in the printed page, large or upper-case headers, catalogue references - into machine-readable information.
 
